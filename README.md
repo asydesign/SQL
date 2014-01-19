@@ -1,5 +1,3 @@
-SQL
-===
 /*CREATE DATABASE Library
 USE Library
 
@@ -193,8 +191,9 @@ where customer.customer_egn = book_customer.customer_egn
 
 
 --1.
-select autor_fname, autor_fname
-from book_autors Join autors on book_autors.autor_id = autors.autor_id
+select autor_fname, autor_lname
+from book_autors 
+Join autors on book_autors.autor_id = autors.autor_id
 where book_autors.book_id = 1
 
 --2.
@@ -202,13 +201,109 @@ select *
 from book_customer Join customer on book_customer.customer_egn = customer.customer_egn
 				   Join book on book_customer.book_id = book.book_id
 				where book.title = 'Научете сами SQL'
-*/
 
-select * from book_customer
 
 --3.
 select customer.*, book.*
 from book_customer Join customer on book_customer.customer_egn = customer.customer_egn
 				   Join book on book_customer.book_id = book.book_id
-				
 
+			
+--4.
+select customer.customer_fname, customer.customer_lname, book.*
+from book_customer Join customer on book_customer.customer_egn = customer.customer_egn
+				   Join book on book_customer.book_id = book.book_id
+				   where customer.customer_fname = 'Иван' AND customer.customer_lname = 'Петров'
+					
+--5.
+select a.autor_fname, a.autor_lname, b.title
+from  book_autors ba Right Join  autors a on ba.autor_id = a.autor_id 
+				  Left Join book b on ba.book_id = b.book_id
+
+--6.
+select customer.*, book.*
+from book_customer Join customer on book_customer.customer_egn = customer.customer_egn
+				   Join book on book_customer.book_id = book.book_id
+				   ORDER by customer.customer_fname
+				  
+
+
+
+select *
+from book 
+where price = (select Max(price) from book)
+
+
+
+--8.
+select distinct autors.autor_fname, autors.autor_lname, book.price
+from  book_autors Full Join autors on book_autors.autor_id = autors.autor_id 
+				  Full Join book on book_autors.book_id = book.book_id
+where price = (select Max(price) from book) or price = (select Min(price) from book)
+
+
+ALTER TABLE book_customer
+ADD get_data varchar(10), return_data varchar(10) 
+
+
+
+--10.
+create view book_A 
+as
+select autors.autor_fname, autors.autor_lname, book.title
+from  book_autors Full Join autors on book_autors.autor_id = autors.autor_id 
+				  Full Join book on book_autors.book_id = book.book_id
+
+
+select * from book_A 
+
+
+create view client_B 
+as
+select customer.customer_fname, customer.customer_lname, book.title
+from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+				  Full Join book on book_customer.book_id = book.book_id
+
+select * from client_B
+
+
+ALTER view client_B 
+as
+select customer.customer_fname + '' + customer.customer_lname as customer, book.title, book_customer.get_data
+from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+				  Full Join book on book_customer.book_id = book.book_id
+
+
+--12.
+create view c_broi 
+as
+select customer.customer_fname + '' + customer.customer_lname as customer
+from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+				  Full Join book on book_customer.book_id = book.book_id
+				  where book.book_id =  (Select COUNT (book.book_id) from book)
+	
+ALTER view c_broi 
+as
+select customer.customer_fname + ' ' + customer.customer_lname as customer, COUNT (book_customer.book_id) as broi
+from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+group by customer.customer_fname, customer.customer_lname				  
+		
+
+--13.
+create view c_notreturn 
+as
+select customer.customer_fname + '' + customer.customer_lname as customer, book.title
+from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+				  Full Join book on book_customer.book_id = book.book_id
+				  where book_customer.return_data is NULL 
+				
+--13a.= 13.				  
+create view c_notreturn 
+as
+select customer.customer_fname + '' + customer.customer_lname as customer, book.title
+from  book_customer, customer, book
+where book_customer.customer_egn = customer.customer_egn 
+and book on book_customer.book_id = book.book_id
+and book_customer.return_data is NULL   	 
+				  	 
+*/
