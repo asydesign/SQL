@@ -246,52 +246,54 @@ ADD get_data varchar(10), return_data varchar(10)
 --10.
 create view book_A 
 as
-select autors.autor_fname, autors.autor_lname, book.title
-from  book_autors Full Join autors on book_autors.autor_id = autors.autor_id 
-				  Full Join book on book_autors.book_id = book.book_id
-
-
-select * from book_A 
+select autors.autor_fname, autors.autor_lname, book.title 
+from  book_autors 
+Full Join autors on book_autors.autor_id = autors.autor_id 
+Full Join book on book_autors.book_id = book.book_id
 
 
 create view client_B 
 as
-select customer.customer_fname, customer.customer_lname, book.title
-from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
-				  Full Join book on book_customer.book_id = book.book_id
+select customer.customer_fname, customer.customer_lname, book.title 
+from  book_customer 
+Full Join customer on book_customer.customer_egn = customer.customer_egn 
+Full Join book on book_customer.book_id = book.book_id
 
-select * from client_B
 
 
 ALTER view client_B 
 as
 select customer.customer_fname + '' + customer.customer_lname as customer, book.title, book_customer.get_data
-from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
-				  Full Join book on book_customer.book_id = book.book_id
+from  book_customer 
+Full Join customer on book_customer.customer_egn = customer.customer_egn 
+Full Join book on book_customer.book_id = book.book_id
 
 
 --12.
 create view c_broi 
 as
 select customer.customer_fname + '' + customer.customer_lname as customer
-from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
-				  Full Join book on book_customer.book_id = book.book_id
-				  where book.book_id =  (Select COUNT (book.book_id) from book)
+from  book_customer 
+Full Join customer on book_customer.customer_egn = customer.customer_egn 
+Full Join book on book_customer.book_id = book.book_id
+where book.book_id =  (Select COUNT (book.book_id) from book)
 	
 ALTER view c_broi 
 as
 select customer.customer_fname + ' ' + customer.customer_lname as customer, COUNT (book_customer.book_id) as broi
-from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
+from  book_customer 
+Full Join customer on book_customer.customer_egn = customer.customer_egn 
 group by customer.customer_fname, customer.customer_lname				  
 		
 
 --13.
 create view c_notreturn 
 as
-select customer.customer_fname + '' + customer.customer_lname as customer, book.title
-from  book_customer Full Join customer on book_customer.customer_egn = customer.customer_egn 
-				  Full Join book on book_customer.book_id = book.book_id
-				  where book_customer.return_data is NULL 
+select customer.customer_fname + '' + customer.customer_lname as customer, book.title 
+FROM  book_customer 
+Full Join customer on book_customer.customer_egn = customer.customer_egn 
+Full Join book on book_customer.book_id = book.book_id
+where book_customer.return_data is NULL 
 				
 --13a.= 13.				  
 create view c_notreturn 
