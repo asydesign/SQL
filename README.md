@@ -49,7 +49,7 @@ ALTER TABLE book_customer
 	ADD CONSTRAINT FK_bc_customer FOREIGN KEY (customer_egn) REFERENCES customer (customer_egn)
 
 
-SET IDENTITY_INSERT book on
+--SET IDENTITY_INSERT book on
 
 INSERT INTO book (book_id, title, price, year_published, ISBN)
 	VALUES (1, 'Научете сами SQL', 20, 2000, '123A-3')
@@ -102,8 +102,7 @@ INSERT INTO book_customer (book_id, customer_egn)
 
 
 UPDATE autors
-	SET autor_fname = 'Ивайло', 
-		autor_lname = 'Илиев'
+	SET autor_fname = 'Ивайло', autor_lname = 'Илиев'
 	WHERE autor_id = 1
 	
 
@@ -138,11 +137,11 @@ SELECT title FROM book WHERE title LIKE 'на%' AND price BETWEEN 20 AND 50
 
 SELECT * FROM book
 SELECT SUM (price) FROM book GROUP BY year_published
+
 SELECT COUNT (customer_fname) FROM customer where customer_fname = 'Ivan'
 SELECT sum (price) FROM book where year_published > '2001' group by year_published
 
-SELECT year_published, sum (price) as Suma
-FROM book 
+SELECT year_published, sum (price) as Suma FROM book 
 where year_published > '2001' 
 group by year_published
 having sum (price) > 20
@@ -150,14 +149,12 @@ order by year_published ASC
 
 
 
-SELECT min (price)
-FROM book 
+SELECT min (price) FROM book 
 having min (price) < 23
 
 
 
-SELECT year_published, count (book_id) as broi
-FROM book 
+SELECT year_published, count (book_id) as broi FROM book 
 group by year_published
 having count (book_id) > 1 --poveche ot edna izdadena kniga na godina
 
@@ -171,8 +168,7 @@ INSERT INTO book
 	VALUES ('Macromedia Flash2', 15, 2014, '677K-4')
 
 
-select title, autor_fname, autor_fname
-from book_autors 
+select title, autor_fname, autor_fname from book_autors 
 Join book on book_autors.book_id = book.book_id
 Join autors on book_autors.autor_id = autors.autor_id
 
