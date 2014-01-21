@@ -1,0 +1,134 @@
+/*
+CREATE TABLE "Doctor"(
+"Doctor_id" integer NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+"DoctorName" varchar(60) NOT NULL,
+"Specialization" varchar(70) NOT NULL
+)
+
+CREATE TABLE "Patient"(
+"Patient_id" integer NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+"PatientName" varchar(60) NOT NULL,
+"Adres" varchar(70) NOT NULL
+)
+
+
+CREATE TABLE "Schedule"(
+"Doctor_id" integer NOT NULL ,
+"Patient_id" integer NOT NULL, 
+"Hourr" date NOT NULL,
+Constraint "fk_sh1" FOREIGN KEY ("Doctor_id") REFERENCES "Doctor" ("Doctor_id"), 
+Constraint "fk_sh2" FOREIGN KEY ("Patient_id") REFERENCES "Patient" ("Patient_id")
+)
+
+INSERT INTO "Doctor" ("DoctorName","Specialization") 
+VALUES 
+('Alex Ivanov', 'Pediater'),
+('Filip Stoianov', 'Hirurg'),
+('Georgi Petrov', 'Oftalmolog'),
+('Marin Atanasov', 'Anesteziolog'),
+('Ilia Dobrev', 'Hirurg'),
+('Michaela Savova', 'Pediater'),
+('Valentina Todorova', 'Urolog'),
+('Veronica Petrova', 'Stomatolog')
+
+INSERT INTO "Patient" ("PatientName","Adres") 
+VALUES 
+('Mira Yovcheva', 'Plovdiv, "Buldaria" 23'),
+('Ivan Petrov', 'Plovdiv, "Maritza" 7'),
+('Petia Petrova', 'Plovdiv, "Bugarievo" 31'),
+('Silvia Ivanova', 'Plovdiv, "Tzar Asen" 12'),
+('Ivailo Tenev', 'Plovdiv, "Maritza" 48'),
+('Tereza Vasileva', 'Sofia, "Slance" 55'),
+('Eli Marinova', 'Plovdiv, "Ruski" 72'),
+('Nina Gencheva', 'Plovdiv, "Trakia" 99'),
+('Nevena Rainova', 'Belastitza, "H. Botev" 5')
+
+
+INSERT INTO "Schedule" ("Doctor_id", "Patient_id", "Hourr") 
+VALUES 
+(1,1,CURRENT_DATE),
+(1,2,CURRENT_DATE),
+(1,3,CURRENT_DATE),
+(1,4,CURRENT_DATE),
+(2,2,CURRENT_DATE),
+(2,5,CURRENT_DATE),
+(2,6,CURRENT_DATE),
+(3,3,CURRENT_DATE),
+(3,4,CURRENT_DATE),
+(3,5,CURRENT_DATE),
+(3,7,CURRENT_DATE),
+(3,8,CURRENT_DATE),
+(4,8,CURRENT_DATE),
+(5,1,CURRENT_DATE),
+(5,5,CURRENT_DATE),
+(6,3,CURRENT_DATE),
+(7,7,CURRENT_DATE)
+
+ALTER TABLE "Schedule"
+DROP CONSTRAINT "fk_sh2"
+
+ALTER TABLE "Schedule"
+ADD Constraint "fk_sh2" FOREIGN KEY ("Patient_id") REFERENCES "Patient" ("Patient_id") ON DELETE CASCADE
+
+ALTER TABLE "Doctor"
+ADD COLUMN "AdresDoc" varchar(70) 
+
+
+INSERT INTO "Doctor" ("DoctorName","Specialization","AdresDoc") VALUES ('Simeon Simeonov', 'Stomatolog', 'Plovdiv, "Bulair" 25')
+INSERT INTO "Patient" ("PatientName","Adres") VALUES ('Violeta Gindeva', 'Plovdiv, "V. Levski" 10')
+INSERT INTO "Schedule" ("Doctor_id", "Patient_id", "Hourr") VALUES (1,6,CURRENT_DATE)
+
+
+UPDATE "Doctor" 
+SET "DoctorName" = 'Stoian Kirilov', "AdresDoc" = 'Sofia, ""Tzarigradsko Shose"" 137"'
+WHERE  "Doctor_id" = 1
+
+ALTER TABLE "Schedule"
+DROP CONSTRAINT "fk_sh1"
+
+ALTER TABLE "Schedule"
+ADD Constraint "fk_sh1" FOREIGN KEY ("Doctor_id") REFERENCES "Doctor" ("Doctor_id") ON DELETE CASCADE
+
+DELETE FROM "Doctor"
+WHERE "DoctorName" LIKE 'I%'
+
+INSERT INTO "Doctor" ("DoctorName","Specialization","AdresDoc") VALUES ('Peter Petrov', 'Hirurg', 'Plovdiv, "Bugarievo" 33')
+INSERT INTO "Doctor" ("DoctorName","Specialization","AdresDoc") VALUES ('Vasil Petrov', 'Hirurg', 'Burgas, "Krusha" 12')
+
+
+
+SELECT "DoctorName" FROM "Doctor"
+WHERE "Specialization" = 'Hirurg' 
+ORDER BY "DoctorName" DESC
+
+
+SELECT "PatientName", "Hourr" FROM "Schedule"
+RIGHT JOIN "Patient" ON "Schedule"."Patient_id" = "Patient"."Patient_id"
+
+ALTER TABLE "Schedule"
+ALTER "Hourr" time
+
+UPDATE "Schedule"
+SET "Hourr" = CURRENT_TIME
+
+ALTER TABLE "Schedule"
+ALTER "Hourr" NOT NULL
+
+INSERT INTO "Schedule" VALUES (1,8,CURRENT_TIME), (2,8,CURRENT_TIME), (7,8,CURRENT_TIME), (6,8,CURRENT_TIME), (1,7,CURRENT_TIME), (2,7,CURRENT_TIME), (6,7,CURRENT_TIME) 
+
+
+
+SELECT "PatientName", COUNT ("Hourr") as "CountOfReservation" FROM "Schedule"
+RIGHT JOIN "Patient" ON "Schedule"."Patient_id" = "Patient"."Patient_id"
+GROUP BY "PatientName"
+HAVING COUNT(*) > 5
+
+
+CREATE VIEW doc_pregled 
+AS
+SELECT "Doctor"."Doctor_id", "DoctorName", COUNT ("Hourr") as "CountOfReservation" FROM "Schedule"
+RIGHT JOIN "Doctor" ON "Schedule"."Doctor_id" = "Doctor"."Doctor_id"
+--WHERE "Hourr" < CURRENT_TIME 
+GROUP BY "DoctorName","Doctor"."Doctor_id"
+
+*/
