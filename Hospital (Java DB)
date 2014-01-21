@@ -124,11 +124,11 @@ GROUP BY "PatientName"
 HAVING COUNT(*) > 5
 
 
-CREATE VIEW doc_pregled 
+CREATE VIEW doc_work 
 AS
 SELECT "Doctor"."Doctor_id", "DoctorName", COUNT ("Hourr") as "CountOfReservation" FROM "Schedule"
 RIGHT JOIN "Doctor" ON "Schedule"."Doctor_id" = "Doctor"."Doctor_id"
---WHERE "Hourr" < CURRENT_TIME 
+WHERE "Hourr" < CURRENT_TIME OR "Hourr" IS NULL
 GROUP BY "DoctorName","Doctor"."Doctor_id"
 
 */
