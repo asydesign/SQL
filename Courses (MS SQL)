@@ -1,0 +1,142 @@
+/*
+
+
+
+
+USE asyBase
+
+CREATE TABLE Courses (
+Course_id int IDENTITY (1,1) PRIMARY KEY,
+Course_Name varchar (60) NOT NULL,
+Duration varchar (50) NOT NULL,
+Lecturer_Name varchar (70) NOT NULL
+)
+
+CREATE TABLE Clients (
+Client_id  int IDENTITY (1,1) PRIMARY KEY,
+Client_Name varchar (60) NOT NULL,
+Address varchar (80) NOT NULL
+)
+
+CREATE TABLE Course_Client (
+Course_id  int NOT NULL FOREIGN KEY REFERENCES Courses (Course_id),
+Client_id int NOT NULL FOREIGN KEY REFERENCES Clients (Client_id) ON DELETE CASCADE,
+Date date NOT NULL
+)
+
+INSERT INTO Courses 
+VALUES ('Physics','120 hour','prof. dfn Tinko Eftimov')
+INSERT INTO Courses 
+VALUES ('Mathematic','120 hour','prof. dmn Peter Petrov')
+INSERT INTO Courses 
+VALUES ('Diskret Math','60 hour','prof. dmn Stoian Kostadinov')
+INSERT INTO Courses 
+VALUES ('Bazi Danni','90 hour','prof. d-r Stanimir Stoianov')
+INSERT INTO Courses 
+VALUES ('Java','60 hour','doc. d-r Hristo Krushkov')
+INSERT INTO Courses 
+VALUES ('SQL_Practicum','60 hour','gl.as. d-r Asya Stoianova-Doicheva')
+INSERT INTO Courses 
+VALUES ('Java_Practicum','60 hour','as. Stoian Cheresharov')
+
+
+INSERT INTO Clients 
+VALUES ('Ivan Ivanov', 'Plovdiv, "Kapitan Raicho" 33')
+INSERT INTO Clients 
+VALUES ('Ivailo Petrov', 'Plovdiv, "Bulgaria" 42')
+INSERT INTO Clients 
+VALUES ('Ilia Iliev', 'Sofia, "Dondukov" 3A')
+INSERT INTO Clients 
+VALUES ('Marina Todorova', 'Plovdiv, "Slavianska" 153')
+INSERT INTO Clients 
+VALUES ('Silvia Mladenova', 'Kalofer, "Levski" 17')
+INSERT INTO Clients 
+VALUES ('Georgi Stanchev', 'Ruse, "Peter I" 42')
+
+
+INSERT INTO Course_Client 
+VALUES (1, 1, '6-01-2014')
+INSERT INTO Course_Client 
+VALUES (1, 2, '6-01-2014')
+INSERT INTO Course_Client 
+VALUES (1, 3, '6-01-2014')
+INSERT INTO Course_Client 
+VALUES (1, 4, '6-01-2014')
+INSERT INTO Course_Client 
+VALUES (3, 3, '5-02-2014')
+INSERT INTO Course_Client 
+VALUES (3, 4, '5-02-2014')
+INSERT INTO Course_Client 
+VALUES (3, 5, '5-02-2014')
+INSERT INTO Course_Client 
+VALUES (3, 6, '5-02-2014')
+INSERT INTO Course_Client 
+VALUES (4, 1, '15-01-2014')
+INSERT INTO Course_Client 
+VALUES (4, 2, '15-01-2014')
+INSERT INTO Course_Client 
+VALUES (4, 3, '15-01-2014')
+INSERT INTO Course_Client 
+VALUES (5, 2, '22-02-2014')
+INSERT INTO Course_Client 
+VALUES (5, 5, '22-02-2014')
+INSERT INTO Course_Client 
+VALUES (6, 7, '17-01-2014')
+INSERT INTO Course_Client 
+VALUES (7, 4, '09-03-2014')
+INSERT INTO Course_Client 
+VALUES (7, 6, '09-03-2014')
+
+--В таблица Courses да се добави нова колона за описание на съответния курс 
+ALTER TABLE Courses
+ADD Descript  varchar (100) 
+
+--Въвеждане по един запис с произволни данни във всяка таблица 
+INSERT INTO Courses 
+VALUES ('mySQL','30 hour','as. d-r Filip Filipov','SQL variation')
+INSERT INTO Clients 
+VALUES ('Mira Ivanova', 'Plovdiv, "Buk" 12')
+INSERT INTO Course_Client 
+VALUES (7, 7, '09-03-2014')
+
+--Промяна на името на курс с идентификатор 23 на ‘SQL’
+UPDATE Courses
+SET Course_Name = 'SQL'
+WHERE Course_id = 6 
+
+--Изтриване на всички клиенти с име, започващо с ‘Иван’ 
+DELETE FROM Clients
+WHERE Client_Name LIKE 'Ivan%'
+
+--Име и адрес на клиентите Резултатът да е сортиран възходящо (a-z) по име на клиент 
+ SELECT Client_Name, Address
+ FROM Clients
+ ORDER BY Client_Name ASC 
+ 
+ 
+ --Име на курсовете и продължителност, за които има записани клиенти. В резултатния набор да участват и курсовете, за които не са записани клиенти (6);
+ SELECT DISTINCT Courses.Course_id, Courses.Course_Name, Courses.Duration
+ FROM Course_Client
+ FULL JOIN Courses ON Course_Client.Course_id = Courses.Course_id
+
+ 
+--Име на клиент  и брой курсове, за които се е записал. В резултатния набор да участват само клиентите, които са се записали за поне 2 курса (6)
+SELECT Clients.Client_Name, COUNT('Course_id') AS Broi  
+ FROM Course_Client
+ JOIN Clients ON Course_Client.Client_id = Clients.Client_id
+ GROUP BY Client_Name
+ HAVING COUNT(*) > 2
+
+
+--Да се създаде изглед в базата данни, който да съдържа наименование на курс и брой клиенти, които са се записали за него. В резултатния набор да участват всички курсове (7).
+CREATE VIEW Cours_BroiClienti
+AS
+SELECT Courses.Course_id, Courses.Course_Name, COUNT (*) AS BroiClienti 
+FROM Course_Client
+FULL JOIN Courses ON Course_Client.Course_id = Courses.Course_id
+GROUP BY Courses.Course_id, Courses.Course_Name
+ 
+
+
+SELECT * 
+FROM Cours_BroiClienti
